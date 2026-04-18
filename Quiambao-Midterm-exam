@@ -1,101 +1,100 @@
-# Sports Data
+# SPORT QUICK TRACKER
+
+# Sports list
 sports = [
-    ["Basketball", "Team"],
-    ["Volleyball", "Team"],
-    ["Badminton", "Individual"],
-    ["Chess", "Individual"],
-    ["Table Tennis", "Individual"]
+    ("Basketball", "Team"),
+    ("Volleyball", "Team"),
+    ("Badminton", "Individual"),
+    ("Chess", "Individual"),
+    ("Table Tennis", "Individual")
 ]
 
-# Ask user info
-section = input("Enter class section name: ")
-coordinator = input("Enter sports coordinator's name: ")
+# Function to get non-empty input
+def get_non_empty(prompt):
+    while True:
+        value = input(prompt).strip()
+        if value != "":
+            return value
+        else:
+            print("Input cannot be empty. Please try again.")
 
-# Show sports list using loop
-print("\n=== SPORTS EVENTS LIST ===")
+# Function to get valid sport number
+def get_valid_sport():
+    while True:
+        choice = input("Enter sport number (1-5) or 0 to skip: ")
+        if choice.isdigit():
+            choice = int(choice)
+            if 0 <= choice <= 5:
+                return choice
+        print("Invalid input. Please enter a number from 0 to 5.")
+
+# Function to get valid result
+def get_valid_result():
+    while True:
+        result = input("Enter result (W for Win, L for Loss): ").upper()
+        if result == "W" or result == "L":
+            return result
+        print("Invalid input. Please enter W or L only.")
+
+# Ask for section and coordinator
+section = get_non_empty("Enter class section name: ")
+coordinator = get_non_empty("Enter sports coordinator name: ")
+
+# Display sports list
+print("\n--- SPORTS EVENTS LIST ---")
 for i in range(len(sports)):
-    print(i + 1, "-", sports[i][0], "(", sports[i][1], ")")
+    print(f"{i+1}. {sports[i][0]} ({sports[i][1]})")
 
-# Lists for saved entries
+# Store game entries
 games = []
 
 # Accept 4 game entries
-for entry in range(1, 5):
-    print("\nGame Entry", entry)
+for i in range(4):
+    print(f"\nGame Entry #{i+1}")
+    sport_num = get_valid_sport()
 
-    sport_num = input("Enter sport number (1-5) or 0 to skip: ")
-
-    # Check if number
-    if not sport_num.isdigit():
-        print("Invalid input. Slot skipped.")
-        continue
-
-    sport_num = int(sport_num)
-
-    # Skip slot
     if sport_num == 0:
-        print("Game slot skipped.")
+        print("Game skipped.")
         continue
 
-    # Valid sport number
-    if 1 <= sport_num <= 5:
-        opponent = input("Enter opposing section name: ")
-        result = input("Enter result (W/L): ").upper()
+    sport_name, category = sports[sport_num - 1]
+    opponent = get_non_empty("Enter opposing section name: ")
+    result = get_valid_result()
 
-        if result == "W":
-            points = 3
-        elif result == "L":
-            points = 0
-        else:
-            print("Invalid result. Automatically set to Loss.")
-            result = "L"
-            points = 0
+    # Assign points
+    points = 3 if result == "W" else 0
 
-        # Save data
-        games.append([
-            sports[sport_num - 1][0],   # sport
-            sports[sport_num - 1][1],   # category
-            opponent,
-            result,
-            points
-        ])
-
-    else:
-        print("Invalid sport number. Slot skipped.")
+    # Store data
+    games.append((sport_name, category, opponent, result, points))
 
 # Compute total points
-total = 0
+total_points = 0
 for game in games:
-    total += game[4]
+    total_points += game[4]
 
 # Determine standing
-if total >= 9:
+if total_points >= 9:
     standing = "GOLD CONTENDER"
-elif total >= 6:
+elif total_points >= 6:
     standing = "SILVER PUSH"
 else:
     standing = "KEEP FIGHTING!"
 
-# Output board
-print("\n==============================")
-print("      SPORT QUICK TRACKER")
-print("==============================")
-print("Section Name :", section)
-print("Coordinator  :", coordinator)
+# Print results board
+print("\n===== GAME RESULTS BOARD =====")
+print("Section:", section)
+print("Coordinator:", coordinator)
+print("\nGames Played:")
 
-print("\nLogged Games:")
-print("No. | Sport         | Category   | Opponent      | Result | Points")
+if len(games) == 0:
+    print("No games recorded.")
+else:
+    for i in range(len(games)):
+        g = games[i]
+        print(f"{i+1}. {g[0]} ({g[1]})")
+        print(f"   Opponent: {g[2]}")
+        print(f"   Result: {g[3]}")
+        print(f"   Points: {g[4]}")
 
-for i in range(len(games)):
-    print(
-        str(i + 1).ljust(4), "|",
-        games[i][0].ljust(13), "|",
-        games[i][1].ljust(10), "|",
-        games[i][2].ljust(13), "|",
-        games[i][3].ljust(6), "|",
-        games[i][4]
-    )
-
-print("\nTotal Points :", total)
-print("Standing     :", standing)
-print("==============================")
+print("\nTotal Points:", total_points)
+print("Standing:", standing)
