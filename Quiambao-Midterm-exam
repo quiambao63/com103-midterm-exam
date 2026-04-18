@@ -1,76 +1,85 @@
-# SPORT QUICK TRACKER
+# Sport Quick Tracker
 
-# Sports list
+# Sports data
 sports = [
-    ("Basketball", "Team"),
-    ("Volleyball", "Team"),
-    ("Badminton", "Individual"),
-    ("Chess", "Individual"),
-    ("Table Tennis", "Individual")
+    ["Basketball", "Team"],
+    ["Volleyball", "Team"],
+    ["Badminton", "Individual"],
+    ["Chess", "Individual"],
+    ["Table Tennis", "Individual"]
 ]
 
-# Function to get non-empty input
-def get_non_empty(prompt):
-    while True:
-        value = input(prompt).strip()
-        if value != "":
-            return value
-        else:
-            print("Input cannot be empty. Please try again.")
+# Ask for class section name
+while True:
+    section = input("Enter Class Section Name: ").strip()
+    if section != "":
+        break
+    print("Section name cannot be empty.")
 
-# Function to get valid sport number
-def get_valid_sport():
-    while True:
-        choice = input("Enter sport number (1-5) or 0 to skip: ")
-        if choice.isdigit():
-            choice = int(choice)
-            if 0 <= choice <= 5:
-                return choice
-        print("Invalid input. Please enter a number from 0 to 5.")
-
-# Function to get valid result
-def get_valid_result():
-    while True:
-        result = input("Enter result (W for Win, L for Loss): ").upper()
-        if result == "W" or result == "L":
-            return result
-        print("Invalid input. Please enter W or L only.")
-
-# Ask for section and coordinator
-section = get_non_empty("Enter class section name: ")
-coordinator = get_non_empty("Enter sports coordinator name: ")
+# Ask for coordinator name
+while True:
+    coordinator = input("Enter Sports Coordinator Name: ").strip()
+    if coordinator != "":
+        break
+    print("Coordinator name cannot be empty.")
 
 # Display sports list
-print("\n--- SPORTS EVENTS LIST ---")
+print("\n=== SPORTS EVENTS LIST ===")
 for i in range(len(sports)):
-    print(f"{i+1}. {sports[i][0]} ({sports[i][1]})")
+    print(i + 1, "-", sports[i][0], "-", sports[i][1])
 
-# Store game entries
 games = []
+total_points = 0
 
 # Accept 4 game entries
-for i in range(4):
-    print(f"\nGame Entry #{i+1}")
-    sport_num = get_valid_sport()
+for entry in range(1, 5):
+    print("\nGame Entry", entry)
 
-    if sport_num == 0:
-        print("Game skipped.")
-        continue
+    while True:
+        sport_num = input("Enter Sport Number (1-5) or 0 to skip: ")
 
-    sport_name, category = sports[sport_num - 1]
-    opponent = get_non_empty("Enter opposing section name: ")
-    result = get_valid_result()
+        if sport_num.isdigit():
+            sport_num = int(sport_num)
 
-    # Assign points
-    points = 3 if result == "W" else 0
+            if sport_num == 0:
+                print("Game slot skipped.")
+                break
 
-    # Store data
-    games.append((sport_name, category, opponent, result, points))
+            elif 1 <= sport_num <= 5:
+                opponent = input("Enter Opposing Section Name: ").strip()
 
-# Compute total points
-total_points = 0
-for game in games:
-    total_points += game[4]
+                while opponent == "":
+                    print("Opponent name cannot be empty.")
+                    opponent = input("Enter Opposing Section Name: ").strip()
+
+                while True:
+                    result = input("Enter Result (W/L): ")
+
+                    if result == "W":
+                        points = 3
+                        break
+                    elif result == "L":
+                        points = 0
+                        break
+                    else:
+                        print("Invalid. Use capital W or L only.")
+
+                games.append([
+                    sports[sport_num - 1][0],
+                    sports[sport_num - 1][1],
+                    opponent,
+                    result,
+                    points
+                ])
+
+                total_points += points
+                break
+
+            else:
+                print("Invalid sport number. Choose 1 to 5.")
+
+        else:
+            print("Invalid input. Numbers only.")
 
 # Determine standing
 if total_points >= 9:
@@ -80,21 +89,31 @@ elif total_points >= 6:
 else:
     standing = "KEEP FIGHTING!"
 
-# Print results board
-print("\n===== GAME RESULTS BOARD =====")
-print("Section:", section)
-print("Coordinator:", coordinator)
-print("\nGames Played:")
+# Print Results Board
+print("\n" + "=" * 60)
+print("              SPORT QUICK TRACKER RESULTS")
+print("=" * 60)
+print("Section Name :", section)
+print("Coordinator  :", coordinator)
+print("-" * 60)
 
 if len(games) == 0:
-    print("No games recorded.")
+    print("No games logged.")
 else:
-    for i in range(len(games)):
-        g = games[i]
-        print(f"{i+1}. {g[0]} ({g[1]})")
-        print(f"   Opponent: {g[2]}")
-        print(f"   Result: {g[3]}")
-        print(f"   Points: {g[4]}")
+    print("No.  Sport           Category      Opponent      Result Points")
+    print("-" * 60)
 
-print("\nTotal Points:", total_points)
-print("Standing:", standing)
+    for i in range(len(games)):
+        print(
+            str(i + 1).ljust(4),
+            games[i][0].ljust(15),
+            games[i][1].ljust(13),
+            games[i][2].ljust(12),
+            games[i][3].ljust(6),
+            games[i][4]
+        )
+
+print("-" * 60)
+print("Total Points :", total_points)
+print("Standing     :", standing)
+print("=" * 60)
